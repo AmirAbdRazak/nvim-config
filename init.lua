@@ -86,7 +86,7 @@ require('lazy').setup({
 
       -- Useful status updates for LSP
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', tag = 'legacy', opts = {} },
+      { 'j-hui/fidget.nvim',       tag = 'legacy', opts = {} },
 
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
@@ -110,7 +110,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim', opts = {} },
+  { 'folke/which-key.nvim',  opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -128,41 +128,72 @@ require('lazy').setup({
 
         -- don't override the built-in and fugitive keymaps
         local gs = package.loaded.gitsigns
-        vim.keymap.set({'n', 'v'}, ']c', function()
+        vim.keymap.set({ 'n', 'v' }, ']c', function()
           if vim.wo.diff then return ']c' end
           vim.schedule(function() gs.next_hunk() end)
           return '<Ignore>'
-        end, {expr=true, buffer = bufnr, desc = "Jump to next hunk"})
-        vim.keymap.set({'n', 'v'}, '[c', function()
+        end, { expr = true, buffer = bufnr, desc = "Jump to next hunk" })
+        vim.keymap.set({ 'n', 'v' }, '[c', function()
           if vim.wo.diff then return '[c' end
           vim.schedule(function() gs.prev_hunk() end)
           return '<Ignore>'
-        end, {expr=true, buffer = bufnr, desc = "Jump to previous hunk"})
+        end, { expr = true, buffer = bufnr, desc = "Jump to previous hunk" })
       end,
     },
   },
-
   {
-    -- Theme inspired by Atom
-    'navarasu/onedark.nvim',
+    "catppuccin/nvim",
+    name = "catppuccin",
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme 'onedark'
-    end,
+      require('catppuccin').setup {
+        transparent_background = true
+      }
+      vim.cmd.colorscheme "catppuccin"
+    end
   },
+
 
   {
     -- Set lualine as statusline
     'nvim-lualine/lualine.nvim',
     -- See `:help lualine.txt`
-    opts = {
-      options = {
-        icons_enabled = false,
-        theme = 'onedark',
-        component_separators = '|',
-        section_separators = '',
-      },
-    },
+    dependencies = { "kyazdani42/nvim-web-devicons", opt = true },
+    config = function()
+      local custom_horizon = require('lualine.themes.horizon')
+      local light_rose = '#fcb6bf'
+      custom_horizon.insert.a.bg = "#c4b5fd"
+
+      custom_horizon.insert.c.fg = light_rose
+      custom_horizon.normal.c.fg = light_rose
+      custom_horizon.command.c.fg = light_rose
+      custom_horizon.visual.c.fg = light_rose
+      custom_horizon.replace.c.fg = light_rose
+      custom_horizon.inactive.c.fg = light_rose
+
+      custom_horizon.insert.c.bg = "NONE"
+      custom_horizon.normal.c.bg = "NONE"
+      custom_horizon.command.c.bg = "NONE"
+      custom_horizon.visual.c.bg = "NONE"
+      custom_horizon.replace.c.bg = "NONE"
+      custom_horizon.inactive.c.bg = "NONE"
+
+      custom_horizon.insert.b.fg = light_rose
+      custom_horizon.normal.b.fg = light_rose
+      custom_horizon.command.b.fg = light_rose
+      custom_horizon.visual.b.fg = light_rose
+      custom_horizon.replace.b.fg = light_rose
+      custom_horizon.inactive.b.fg = light_rose
+
+      require('lualine').setup {
+        options = {
+          icons_enabled = false,
+          theme = custom_horizon,
+          component_separators = '|',
+          section_separators = '|',
+        }
+      }
+    end
   },
 
   {
@@ -212,8 +243,8 @@ require('lazy').setup({
   -- NOTE: Next Step on Your Neovim Journey: Add/Configure additional "plugins" for kickstart
   --       These are some example plugins that I've included in the kickstart repository.
   --       Uncomment any of the lines below to enable them.
-  -- require 'kickstart.plugins.autoformat',
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.autoformat',
+  require 'kickstart.plugins.debug',
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    You can use this folder to prevent any conflicts with this init.lua if you're interested in keeping
@@ -233,6 +264,10 @@ vim.o.hlsearch = false
 
 -- Make line numbers default
 vim.wo.number = true
+vim.o.relativenumber = true
+
+-- Vertical right open file default
+vim.o.splitright = true
 
 -- Enable mouse mode
 vim.o.mouse = 'a'
@@ -325,7 +360,8 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 -- See `:help nvim-treesitter`
 require('nvim-treesitter.configs').setup {
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim' },
+  ensure_installed = { 'c', 'cpp', 'dockerfile', 'html', 'go', 'lua', 'markdown', 'python', 'rust', 'tsx', 'javascript',
+    'typescript', 'svelte', 'yaml', 'vimdoc', 'vim' },
 
   -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
   auto_install = false,
