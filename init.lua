@@ -73,6 +73,18 @@ require('lazy').setup({
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
+  -- Colorizer
+  {
+    'NvChad/nvim-colorizer.lua',
+    name = 'colorizer',
+    config = function()
+      require('colorizer').setup({
+        user_default_options = {
+          tailwind = true,
+        }
+      })
+    end
+  },
 
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
@@ -106,7 +118,13 @@ require('lazy').setup({
 
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
+      { 'roobert/tailwindcss-colorizer-cmp.nvim', config = true }
     },
+    opts = function(_, opts)
+      opts.formatting = {
+        format = require("tailwindcss-colorizer-cmp").formatter
+      }
+    end
   },
 
   -- Useful plugin to show you pending keybinds.
@@ -191,6 +209,9 @@ require('lazy').setup({
           theme = custom_horizon,
           component_separators = '|',
           section_separators = '|',
+        },
+        sections = {
+          lualine_c = { "vim.fn.fnamemodify(vim.fn.expand('%'), ':p:~:.')" }
         }
       }
     end
@@ -255,9 +276,7 @@ require('lazy').setup({
   -- { import = 'custom.plugins' },
 }, {})
 
--- [[ Setting options ]]
--- See `:help vim.o`
--- NOTE: You can change these options as you wish!
+-- Colorizer init
 
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -504,6 +523,9 @@ require('neodev').setup()
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
+require("cmp").config.formatting = {
+  format = require("tailwindcss-colorizer-cmp").formatter
+}
 
 -- Ensure the servers above are installed
 local mason_lspconfig = require 'mason-lspconfig'
