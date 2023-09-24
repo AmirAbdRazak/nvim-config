@@ -70,6 +70,9 @@ require('lazy').setup({
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
+  'tpope/vim-surround',
+
+  'windwp/nvim-autopairs',
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
@@ -103,8 +106,80 @@ require('lazy').setup({
       -- Additional lua configuration, makes nvim stuff amazing!
       'folke/neodev.nvim',
     },
+    opts = {
+      servers = {
+        -- Ensure mason installs the server
+        rust_analyzer = {
+          keys = {
+            { "K",          "<cmd>RustHoverActions<cr>", desc = "Hover Actions (Rust)" },
+            { "<leader>cR", "<cmd>RustCodeAction<cr>",   desc = "Code Action (Rust)" },
+            { "<leader>dr", "<cmd>RustDebuggables<cr>",  desc = "Run Debuggables (Rust)" },
+          },
+          settings = {
+            ["rust-analyzer"] = {
+              cargo = {
+                allFeatures = true,
+                loadOutDirsFromCheck = true,
+                runBuildScripts = true,
+              },
+              -- Add clippy lints for Rust.
+              checkOnSave = {
+                allFeatures = true,
+                command = "clippy",
+                extraArgs = { "--no-deps" },
+              },
+              procMacro = {
+                enable = true,
+                ignored = {
+                  ["async-trait"] = { "async_trait" },
+                  ["napi-derive"] = { "napi" },
+                  ["async-recursion"] = { "async_recursion" },
+                },
+              },
+            },
+          },
+        },
+        taplo = {
+          keys = {
+            {
+              "K",
+              function()
+                if vim.fn.expand("%:t") == "Cargo.toml" and require("crates").popup_available() then
+                  require("crates").show_popup()
+                else
+                  vim.lsp.buf.hover()
+                end
+              end,
+              desc = "Show Crate Documentation",
+            },
+          },
+        },
+      },
+      setup = {
+        rust_analyzer = function(_, opts)
+          local rust_tools_opts = require("lazyvim.util").opts("rust-tools.nvim")
+          require("rust-tools").setup(vim.tbl_deep_extend("force", rust_tools_opts or {}, { server = opts }))
+          return true
+        end,
+      },
+    },
   },
-
+  {
+    "simrat39/rust-tools.nvim",
+    opts = function(_, _)
+      require('rust-tools').setup({
+        tools = {
+          inlay_hints = {
+            parameter_hints_prefix = "=>",
+            other_hints_prefix = ": "
+          }
+        }
+      })
+      require('rust-tools').hover_actions.hover_actions()
+      require('rust-tools').inlay_hints.set()
+      require('rust-tools').inlay_hints.enable()
+    end
+  },
   {
     -- Autocompletion
     'hrsh7th/nvim-cmp',
@@ -211,7 +286,7 @@ require('lazy').setup({
           section_separators = '|',
         },
         sections = {
-          lualine_c = { "vim.fn.fnamemodify(vim.fn.expand('%'), ':p:~:.')" }
+          lualine_x = { "encoding", "fileformat", "filetype", "vim.fn.fnamemodify(vim.fn.expand('%:h'), ':p:~:.')" }
         }
       }
     end
@@ -276,7 +351,6 @@ require('lazy').setup({
   -- { import = 'custom.plugins' },
 }, {})
 
--- Colorizer init
 
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -369,11 +443,17 @@ end, { desc = '[/] Fuzzily search in current buffer' })
 
 vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
 vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sa',
+  function()
+    require('telescope.builtin').find_files({ find_command = { 'rg', '--files', '--hidden', '-g', '!.git' } })
+  end,
+  { desc = '[S]earch [A]ll files' })
 vim.keymap.set('n', '<leader>sh', require('telescope.builtin').help_tags, { desc = '[S]earch [H]elp' })
 vim.keymap.set('n', '<leader>sw', require('telescope.builtin').grep_string, { desc = '[S]earch current [W]ord' })
 vim.keymap.set('n', '<leader>sg', require('telescope.builtin').live_grep, { desc = '[S]earch by [G]rep' })
 vim.keymap.set('n', '<leader>sd', require('telescope.builtin').diagnostics, { desc = '[S]earch [D]iagnostics' })
 vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = '[S]earch [R]resume' })
+vim.keymap.set('n', '<leader>f', vim.lsp.buf.format, { desc = '[F]ormat current buffer' })
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
@@ -487,6 +567,7 @@ local on_attach = function(_, bufnr)
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, '[W]orkspace [L]ist Folders')
 
+
   -- Create a command `:Format` local to the LSP buffer
   vim.api.nvim_buf_create_user_command(bufnr, 'Format', function(_)
     vim.lsp.buf.format()
@@ -563,7 +644,7 @@ cmp.setup {
     ['<C-p>'] = cmp.mapping.select_prev_item(),
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete {},
+    ['<C-m>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
       select = true,
