@@ -71,8 +71,9 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
   'tpope/vim-surround',
-
+  'BurntSushi/ripgrep',
   'windwp/nvim-autopairs',
+  'airblade/vim-gitgutter',
 
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
@@ -295,12 +296,8 @@ require('lazy').setup({
   {
     -- Add indentation guides even on blank lines
     'lukas-reineke/indent-blankline.nvim',
-    -- Enable `lukas-reineke/indent-blankline.nvim`
-    -- See `:help indent_blankline.txt`
-    opts = {
-      char = '┊',
-      show_trailing_blankline_indent = false,
-    },
+    main = "ibl",
+    opts = {}
   },
 
   -- "gc" to comment visual regions/lines
@@ -310,6 +307,15 @@ require('lazy').setup({
   {
     'nvim-telescope/telescope.nvim',
     branch = '0.1.x',
+    config = function()
+      require('telescope').setup {
+        defaults = {
+          file_ignore_patterns = {
+            "node_modules"
+          }
+        }
+      }
+    end,
     dependencies = {
       'nvim-lua/plenary.nvim',
       -- Fuzzy Finder Algorithm which requires local dependencies to be built.
@@ -442,7 +448,9 @@ vim.keymap.set('n', '<leader>/', function()
 end, { desc = '[/] Fuzzily search in current buffer' })
 
 vim.keymap.set('n', '<leader>gf', require('telescope.builtin').git_files, { desc = 'Search [G]it [F]iles' })
-vim.keymap.set('n', '<leader>sf', require('telescope.builtin').find_files, { desc = '[S]earch [F]iles' })
+vim.keymap.set('n', '<leader>sf',
+  require('telescope.builtin').find_files,
+  { desc = '[S]earch [F]iles' })
 vim.keymap.set('n', '<leader>sa',
   function()
     require('telescope.builtin').find_files({ find_command = { 'rg', '--files', '--hidden', '-g', '!.git' } })
