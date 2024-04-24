@@ -72,6 +72,7 @@ require('lazy').setup({
   'tpope/vim-rhubarb',
   'tpope/vim-surround',
   'nvim-neotest/nvim-nio',
+  'matze/vim-move',
   'BurntSushi/ripgrep',
   'windwp/nvim-autopairs',
   'airblade/vim-gitgutter',
@@ -409,6 +410,19 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+-- remap for vim-move
+local vim_move_opts = { silent = true, noremap = true }
+vim.keymap.set('v', '<C-Up>', '<Plug>MoveBlockUp', vim_move_opts)
+vim.keymap.set('v', '<C-Down>', '<Plug>MoveBlockDown', vim_move_opts)
+vim.keymap.set('v', '<C-Right>', '<Plug>MoveBlockRight', vim_move_opts)
+vim.keymap.set('v', '<C-Left>', '<Plug>MoveBlockLeft', vim_move_opts)
+
+vim.keymap.set('n', '<C-Up>', '<Plug>MoveLineUp', vim_move_opts)
+vim.keymap.set('n', '<C-Down>', '<Plug>MoveLineDown', vim_move_opts)
+vim.keymap.set('n', '<C-Left>', '<Plug>MoveCharLeft', vim_move_opts)
+vim.keymap.set('n', '<C-Right>', '<Plug>MoveCharRight', vim_move_opts)
+
+
 -- [[ Highlight on yank ]]
 -- See `:help vim.highlight.on_yank()`
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
@@ -419,6 +433,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = highlight_group,
   pattern = '*',
 })
+
+
 
 -- [[ Configure Telescope ]]
 -- See `:help telescope` and `:help telescope.setup()`
