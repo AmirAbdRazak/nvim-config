@@ -71,10 +71,11 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
   'tpope/vim-surround',
+  'nvim-neotest/nvim-nio',
   'BurntSushi/ripgrep',
   'windwp/nvim-autopairs',
   'airblade/vim-gitgutter',
-
+  'wellle/context.vim',
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
   -- Colorizer
@@ -89,7 +90,6 @@ require('lazy').setup({
       })
     end
   },
-
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
