@@ -77,6 +77,7 @@ require('lazy').setup({
   'windwp/nvim-autopairs',
   'airblade/vim-gitgutter',
   'wellle/context.vim',
+  'Olical/conjure',
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
   -- Colorizer
