@@ -72,15 +72,69 @@ require('lazy').setup({
   'tpope/vim-rhubarb',
   'tpope/vim-surround',
   'nvim-neotest/nvim-nio',
+  { "ellisonleao/gruvbox.nvim", priority = 1000, config = true, opts = ... },
+  {
+    "kdheepak/lazygit.nvim",
+    lazy = true,
+    cmd = {
+      "LazyGit",
+      "LazyGitConfig",
+      "LazyGitCurrentFile",
+      "LazyGitFilter",
+      "LazyGitFilterCurrentFile",
+    },
+    -- optional for floating window border decoration
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    -- setting the keybinding for LazyGit with 'keys' is recommended in
+    -- order to load the plugin when the command is run for the first time
+    keys = {
+      { "<leader>lf", "<cmd>LazyGit<cr>", desc = "LazyGit" }
+    }
+  },
   'matze/vim-move',
   'BurntSushi/ripgrep',
   'windwp/nvim-autopairs',
   'airblade/vim-gitgutter',
-  'wellle/context.vim',
   'Olical/conjure',
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
   -- Colorizer
+  {
+    "epwalsh/obsidian.nvim",
+    version = "*", -- recommended, use latest release instead of latest commit
+    lazy = true,
+    ft = "markdown",
+    -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
+    -- event = {
+    --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
+    --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/*.md"
+    --   -- refer to `:h file-pattern` for more examples
+    --   "BufReadPre path/to/my-vault/*.md",
+    --   "BufNewFile path/to/my-vault/*.md",
+    -- },
+    dependencies = {
+      -- Required.
+      "nvim-lua/plenary.nvim",
+
+      -- see below for full list of optional dependencies 👇
+    },
+    opts = {
+      workspaces = {
+        {
+          name = "personal",
+          path = "~/vaults/personal",
+        },
+        {
+          name = "study",
+          path = "~/vaults/study",
+        },
+      },
+
+      -- see below for full list of options 👇
+    },
+  },
   {
     'NvChad/nvim-colorizer.lua',
     name = 'colorizer',
@@ -89,6 +143,15 @@ require('lazy').setup({
         user_default_options = {
           tailwind = true,
         }
+      })
+    end
+  },
+  {
+    'andweeb/presence.nvim',
+    name = "presence",
+    config = function()
+      require("presence").setup({
+        neovim_image_text = "mrreowwwf~ :3",
       })
     end
   },
@@ -206,7 +269,7 @@ require('lazy').setup({
   },
 
   -- Useful plugin to show you pending keybinds.
-  { 'folke/which-key.nvim',  opts = {} },
+  { 'folke/which-key.nvim',     opts = {} },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -244,12 +307,49 @@ require('lazy').setup({
     priority = 1000,
     config = function()
       require('catppuccin').setup {
+        flavour = "latte",
         transparent_background = true
       }
-      vim.cmd.colorscheme "catppuccin"
     end
   },
 
+  {
+    "rose-pine/neovim",
+    name = "rose-pine",
+    config = function()
+      require("rose-pine").setup({
+        styles = {
+          bold = true,
+          italic = true,
+          transparency = true,
+        },
+        palette = {
+          dawn = {
+            _nc = "#f8f0e7",
+            base = "#faf4ed",
+            surface = "#fffaf3",
+            overlay = "#f2e9e1",
+            muted = "#9893a5",
+            subtle = "#797593",
+            text = "#575279",
+            love = "#b4637a",
+
+            gold = "#d7827e",
+            rose = "#6A9C89",
+            pine = "#286983",
+            foam = "#56949f",
+            iris = "#907aa9",
+            leaf = "#6d8f89",
+            highlight_low = "#f4ede8",
+            highlight_med = "#dfdad9",
+            highlight_high = "#cecacd",
+            none = "NONE",
+          }
+
+        }
+      })
+    end
+  },
 
   {
     -- Set lualine as statusline
@@ -360,6 +460,8 @@ require('lazy').setup({
   -- { import = 'custom.plugins' },
 }, {})
 
+vim.o.background = "light"
+vim.cmd("colorscheme rose-pine-dawn")
 -- Set highlight on search
 vim.o.hlsearch = false
 
