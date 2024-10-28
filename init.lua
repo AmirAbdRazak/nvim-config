@@ -333,9 +333,8 @@ require('lazy').setup({
             subtle = "#797593",
             text = "#575279",
             love = "#b4637a",
-
+            rose = "#ea9d34",
             gold = "#d7827e",
-            rose = "#6A9C89",
             pine = "#286983",
             foam = "#56949f",
             iris = "#907aa9",
@@ -343,6 +342,7 @@ require('lazy').setup({
             highlight_low = "#f4ede8",
             highlight_med = "#dfdad9",
             highlight_high = "#cecacd",
+
             none = "NONE",
           }
 
